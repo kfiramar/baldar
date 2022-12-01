@@ -1,0 +1,11 @@
+SELECT DISTINCT *
+FROM(
+    SELECT file.project, COUNT (*) AS num_downloads
+    FROM `bigquery-public-data.pypi.file_downloads`
+    WHERE DATE(timestamp)
+    BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 1 WEEK)
+    AND CURRENT_DATE()
+    GROUP BY file.project
+    ORDER BY num_downloads desc
+    LIMIT 5000
+)
