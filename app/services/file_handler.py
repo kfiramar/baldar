@@ -1,6 +1,7 @@
 from typing import List
 from app.models.requirement import Requirement
 from app.models.package_types import PackageType
+import os 
 
 
 def generate_package_list(file_path: str, package_type: PackageType) -> List[Requirement]:

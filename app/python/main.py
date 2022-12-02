@@ -4,13 +4,11 @@ from datetime import datetime
 
 from app.models.package import Package
 
-from app.core.config import PYTHON_PACKAGE_NAME
+from app.core.config import PYTHON_PACKAGE_NAME, LAST_UPDATED_DATE
 
 from app.services import get_latest_db_version, is_newer_version, sort_versions_list
 
 formatted_pypi_json_url = "https://pypi.org/pypi/{}/json"
-
-LAST_UPDATED_DATE = datetime.strptime("2022-09-15T00:00:00", "%Y-%m-%dT%H:%M:%S")
 
 def get_all_releases(package_name: str) -> list:
     package_json = get(formatted_pypi_json_url.format(package_name)).json()
@@ -27,8 +25,9 @@ def cast_releases_to_dates(releases):
 
 def date_to_version(date, releases):
     for release in releases:
-        if get_date_from_release(releases[release]) == date:
-            return release
+        if releases[release]:
+            if get_date_from_release(releases[release]) == date:
+                return release
     raise Exception("Weird - ERROR")
 
 
@@ -44,14 +43,16 @@ def generate_releases_to_download_by_dates(package_name: str) -> list:
     releases = get_all_releases(package_name)
     releases_dates = cast_releases_to_dates(releases)
     latest_date = releases_dates[len(releases_dates) - 1]
-    if (not LAST_UPDATED_DATE < latest_date):
+    if (LAST_UPDATED_DATE > latest_date):
         return download_list
-    for date in releases_dates:
-        if (not LAST_UPDATED_DATE < latest_date):
-            break
-        for file in releases[date_to_version(date, releases)]:
-            file["version"] = release
-            download_list.append(file)
+    for date in reversed(releases_dates):
+        version = date_to_version(date, releases)
+        if version:
+            if (LAST_UPDATED_DATE > date):
+                break
+            for file in releases[version]:
+                file["version"] = version
+                download_list.append(file)
 
     return download_list
 

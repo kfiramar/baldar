@@ -1,3 +1,4 @@
+import logging
 import threading
 from pydantic.types import FilePath
 from requests import get
@@ -6,7 +7,7 @@ from app.models.package import Package
 
 from app.core.config import DOWNLOAD_FOLDER
 
-
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(message)s") 
 
 from os import makedirs
 # from os.path import isdir
@@ -31,7 +32,7 @@ class DownloaderWorker(threading.Thread):
 
     def download_file(self, package: Package) -> None:
         file_path = f"{DOWNLOAD_FOLDER}\{package.package_type}\{package.package_name}\{package.file_name}"
-
+        logging.info(f"starting to download {package.file_name}")
         with get(package.download_url, stream=True) as request:
             request.raise_for_status()
             try:

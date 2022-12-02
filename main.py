@@ -1,5 +1,4 @@
 import queue
-import os.path
 from typing import List
 from app.core.config import NPM_PACKAGE_NAME, NPM_PACKAGES_TO_DOWNLOAD_FULL_LIST_RELATIVE_PATH, NPM_PACKAGES_TO_DOWNLOAD_RELATIVE_PATH, PYPI_PACKAGES_TO_DOWNLOAD_FULL_LIST_RELATIVE_PATH, PYTHON_PACKAGE_NAME
 from app.models import RegisterWorker, DownloaderWorker
@@ -11,10 +10,6 @@ from app.js.main import clean_file
 from time import sleep
 from app.services.file_handler import generate_package_list
 from app.python.main import generate_releases_to_download_by_dates
-
-
-
-
 
 
 
